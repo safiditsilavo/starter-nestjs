@@ -17,21 +17,32 @@ export class StatsService {
 
     async getCompareStats(stat1: Stats, stat2: Stats) {
         let w1 = new Set(stat1.wishlist_ids);
-        let c1 = new Set(stat2.command_ids);
+        let c1 = new Set(stat1.command_ids);
         let w2 = new Set(stat2.wishlist_ids);
         let c2 = new Set(stat2.command_ids);
 
         const wishlistDifference = 1 - this.jaccardSimilarity(w1, w2);
         const commandDifference = 1 - this.jaccardSimilarity(c1, c2);
-        // const avgSimilarity = (wishlistDifference + commandDifference) / 2;
-        const max1 = (stat1.wishlist_ids.length > stat2.wishlist_ids.length) ? stat1.wishlist_ids.length : stat2.wishlist_ids.length;
-        const max2 = (stat1.command_ids.length > stat2.command_ids.length) ? stat1.command_ids.length : stat2.command_ids.length;
+        const avgSimilarity = (wishlistDifference + commandDifference) / 2;
+        // const max1 = (stat1.wishlist_ids.length > stat2.wishlist_ids.length) ? stat1.wishlist_ids.length : stat2.wishlist_ids.length;
+        // const max2 = (stat1.command_ids.length > stat2.command_ids.length) ? stat1.command_ids.length : stat2.command_ids.length;
 
         return { 
             "distance-wishlist": wishlistDifference, 
             "distance-command": commandDifference,
-            "max-wishlist": max1, 
-            "max-command": max2 
+            "average-distance": avgSimilarity,
+            "entity": [
+                {
+                    "idCli1": stat1.id_client,
+                    "w1-length": w1.size, 
+                    "c1-length": c1.size 
+                },
+                {
+                    "idCli2": stat2.id_client,
+                    "w2-length": w2.size, 
+                    "c2-length": c2.size 
+                }
+            ],
         };
     }
 
